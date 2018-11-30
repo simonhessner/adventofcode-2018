@@ -1,2 +1,2 @@
 # Advent of Code 2018 solutions
-I will share my personal solutions for the problems presented in the [Advent of Code 2018](https://adventofcode.com/) coding competition here. My code is written in Python 3.
+I will share my personal solutions for the problems presented in the [Advent of Code 2018](https://adventofcode.com/2018) coding competition here. My code is written in Python 3. Also check my [blog article about AOC18](https://simonhessner.de/advent-of-code-2018-25-days-of-coding/).
