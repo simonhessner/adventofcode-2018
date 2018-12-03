@@ -5,10 +5,10 @@ with open('input') as f:
 
 	print("A", sum(numbers))
 
-	seen = []
+	seen = set([]) # set is about 16.000 times faster in this case
 	for a in itertools.accumulate(itertools.cycle(numbers)):
 		if a not in seen:
-			seen.append(a)
+			seen.add(a)
 		else:
 			print("B", a)
 			break		
