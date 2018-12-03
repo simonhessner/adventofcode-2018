@@ -1,3 +1,6 @@
+# My solution for https://adventofcode.com/2018/day/3
+# TODO improve performance (40s is too slow)
+
 import numpy as np
 
 with open("input") as inputfile:
@@ -41,4 +44,4 @@ with open("input") as inputfile:
 
 	print("A", n)
 
-	print("B", [rectangles[i] for i in leftover])
+	print("B", [rectangles[i] for i in leftover][0][4])
