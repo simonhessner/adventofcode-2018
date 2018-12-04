@@ -1,51 +1,50 @@
+# https://adventofcode.com/2018/day/4
+
 import datetime
 import operator
+from collections import defaultdict
+from collections import Counter
 
 with open('input') as f:
 	lines = f.read().splitlines()
 
-	guards = {}
+	guards = defaultdict(lambda : Counter({ minute : 0 for minute in range(60) }))
 	guard = -1
 	sleepstart = -1
-	sleepend = -1
 
-	lines = sorted(lines, key=lambda x: datetime.datetime.strptime(x.split("] ")[0][1:], "%Y-%m-%d %H:%M").timestamp())
+	lines = sorted(lines, key=lambda x: datetime.datetime.strptime(x[x.index("[")+1:x.index("]")], "%Y-%m-%d %H:%M").timestamp())
 
 	for line in lines:
 		firstpart = line.split("] ")[0]
-		lastpart = line.split("] ")[1]
-
-		date = firstpart.split(" ")[0]
-		time = firstpart.split(" ")[1]
-
-		year = int(date.split("-")[0][1:])
-		month = int(date.split("-")[1])
-		day = int(date.split("-")[2])
-
-		hour = int(time.split(":")[0])
-		minute = int(time.split(":")[1])
+		lastpart  = line.split("] ")[1]
+		time 	  = firstpart.split(" ")[1]
+		minute 	  = int(time.split(":")[1])		
 
 		if lastpart.startswith("Guard #"):
-			guard = int(lastpart.split(" ")[1][1:])			
-			if guard not in guards:
-				guards[guard] = [0 for _ in range(60)]
+			guard = int(lastpart.split(" ")[1][1:])
 		elif lastpart.startswith("wakes"):
-			sleepend = minute
-			for m in range(sleepstart, sleepend):
-				guards[guard][m] += 1
-			sleepstart = -1
-			sleepend = -1
-		elif lastpart.startswith("falls"):
-			if sleepstart != -1:
-				print("ERROR")
+			guards[guard].update({_min : 1 for _min in range(sleepstart, minute)})
+		elif lastpart.startswith("falls"):			
 			sleepstart = minute
 
-	minutes_asleep = {guard : sum(sl) for guard, sl in guards.items()}
-	_id, minsum = max(minutes_asleep.items(), key=operator.itemgetter(1))
-	print(_id * [i for i in range(60) if guards[_id][i] == max(guards[_id])][0])
+	gid_max_sum = -1
+	max_sum = -1
+	max_minute_p1 = -1
+	gid_max_minute = -1
+	max_minute_val = -1
+	max_minute_p2 = -1
 
-	max_per_min = {guard : max(sl) for guard, sl in guards.items()}
-	print(max_per_min)
-	_id, amount = max(max_per_min.items(), key=operator.itemgetter(1))
-	m = guards[_id].index(amount)
-	print(_id * m)
+	for gid, sleep_count in guards.items():
+		sleep_count = list(dict(sleep_count).values())
+		if sum(sleep_count) > max_sum:
+			max_sum = sum(sleep_count)
+			gid_max_sum = gid
+			max_minute_p1 = sleep_count.index(max(sleep_count))
+
+		if max(sleep_count) > max_minute_val:
+			gid_max_minute = gid
+			max_minute_val = max(sleep_count)
+			max_minute_p2 = sleep_count.index(max_minute_val)
+
+	print("A", gid_max_sum * max_minute_p1)
+	print("B", gid_max_minute * max_minute_p2)
