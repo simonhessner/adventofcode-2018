@@ -1,47 +1,35 @@
 # My solution for https://adventofcode.com/2018/day/3
-# TODO improve performance (40s is too slow)
 
-import numpy as np
+from collections import defaultdict
 
 with open("input") as inputfile:
 	lines = inputfile.read().splitlines()
-	rectangles = []
 
-	max_x = 0
-	max_y = 0
+	field = defaultdict(set)
+	intersections = defaultdict(set)
+
+	no_intersections = set()
+
 	for line in lines:
 		parts  = line.split(" ")
-		_id    = int(parts[0][1:])
+		cid    = int(parts[0][1:])
 		left   = int(parts[2].split(",")[0])
 		top    = int(parts[2].split(",")[1][:-1])
 		width  = int(parts[3].split("x")[0])
 		height = int(parts[3].split("x")[1])
-		max_x  = max(max_x, left+width)
-		max_y  = max(max_y, top+height)
 
-		rectangles.append((left, top, width, height, _id))
+		no_intersections.add(cid) # Assume this rectangle has no intersections with others
+		intersections_found = set() # Every intersection that is found now will be removed from no_intersections later
 
-	leftover = list(range(len(rectangles)))
-	
-	field = np.zeros((max_x+1, max_y+1), dtype=np.int)
+		for x in range(left, left+width):
+			for y in range(top, top+height):
+				for other_cid in field[(x,y)]:
+					intersections[cid].add(other_cid)
+					intersections[other_cid].add(cid)
+					intersections_found |= set([cid, other_cid])
+				field[(x,y)].add(cid)
 
-	for rect in rectangles:
-		for x in range(rect[0], rect[0]+rect[2]):
-			for y in range(rect[1], rect[1]+rect[3]):
-				field[x,y] += 1
+		no_intersections -= intersections_found
 
-				if field[x,y] > 1:
-					for i in leftover:
-						r = rectangles[i]
-						if x in range(r[0], r[0]+r[2]) and y in range(r[1], r[1]+r[3]):
-							leftover = [a for a in leftover if a != i]
-
-	n = 0
-	for row in field:
-		for cell in row:
-			if cell > 1:
-				n += 1
-
-	print("A", n)
-
-	print("B", [rectangles[i] for i in leftover][0][4])
+	print("A", sum([len(claims) >= 2 for claims in field.values()]))
+	print("B", list(no_intersections)[0])
