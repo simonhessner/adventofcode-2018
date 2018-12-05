@@ -1,4 +1,4 @@
-# https://adventofcode.com/2018/day/
+# https://adventofcode.com/2018/day/5
 # This runs about 800 times faster than solution_slow.py (reason: react() only adds and removes elements at the end of the new string and not at arbitrary positions)
 
 import string
