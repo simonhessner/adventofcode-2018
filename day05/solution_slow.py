@@ -1,3 +1,6 @@
+# https://adventofcode.com/2018/day/5
+# My solution runs very slow (240s), probably because of the construction of a new string everytime a reaction is found. solution_fast.py avoids this
+
 def findIndex(inp):
 	for i in range(len(inp)-1):
 		if ((inp[i].isupper() and inp[i+1].islower()) or (inp[i+1].isupper() and inp[i].islower())) and inp[i].lower() == inp[i+1].lower():
