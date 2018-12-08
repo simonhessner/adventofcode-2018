@@ -1,68 +1,55 @@
-#https://adventofcode.com/2018/day/6
-# There was a bug in the AOC system which caused many users to fai:
+# https://adventofcode.com/2018/day/6
+# There was a bug in the AOC system which caused many users to fail:
 # https://www.reddit.com/r/adventofcode/comments/a3kr4r/2018_day_6_solutions/
 
-# My code is very hacky and also part A is not correct. The correct result is
-# not the max in line 50 but the second max in line 51. Will try to find the
-# problem tomorrow
-
-from collections import defaultdict
+from collections import defaultdict, Counter
 
 def manhattan(a, b):
 	return abs(a[0]-b[0]) + abs(a[1]-b[1])
 
-with open('testinput') as f:
-	lines = f.read().splitlines()
-	coords = []
-	xs = []
-	ys = []
-	for line in lines:		
+with open('input') as f:
+	coords, xs, ys = [], [], []
+	for line in f.read().splitlines():		
 		coords.append(tuple((map(int, line.split(",")))))
 		xs.append(coords[-1][0])
 		ys.append(coords[-1][1])
 
 	minx, maxx = min(xs), max(xs)
-	miny, maxy = min(ys), max(ys)
+	miny, maxy = min(ys), max(ys)		
 
-	def find_closest(x,y):
-		points_with_dist = defaultdict(list)
+	field = defaultdict(tuple)
 
-		for c in coords:						
+	for y in range(miny, maxy+1):
+		for x in range(minx, maxx+1):
+			points_with_dist = defaultdict(list)
+			for c in coords:
 				d = manhattan((x,y), c)
 				points_with_dist[d].append(c)
 
-		md = min(dict(points_with_dist).keys())
-		if len(points_with_dist[md]) > 1:
-			return None
-		return points_with_dist[md][0]
+			closest = points_with_dist[min(dict(points_with_dist).keys())]
+			field[(x,y)] = closest[0] if len(closest) == 1 else None
 
-	def is_on_border(cl):
-		return cl[0] in [minx, maxx] or cl[1] in [miny, maxy]
-
-	is_closest = defaultdict(int)
+	# Every point that is closest to one border point is part of a infinite area
+	inf_points = set([None]) # This is technically not an infinite point, but a point that has more than one closes points
+	for x in range(minx, maxx):
+		inf_points.add(field[(x,miny)])
+		inf_points.add(field[(x,maxy)])
 
 	for y in range(miny, maxy):
-		for x in range(minx, maxx):
-			cl = find_closest(x,y)
-			if cl is not None:# and not is_on_border(cl):
-				is_closest[cl] += 1
+		inf_points.add(field[(minx,y)])
+		inf_points.add(field[(maxx,y)])
 
-	is_closest = {k :v for k,v in is_closest.items() if not is_on_border(k) }
-
-	print("A", max(dict(is_closest).values()))
-	print(sorted(dict(is_closest).values()))
+	c = Counter(field.values())
+	biggest_area = [count for p,count in c.most_common() if p not in inf_points][0]
+	print("Part 1", biggest_area)
 
 	def get_sum(x,y):
-		s = 0
-		for coord in coords:
-			s += manhattan((x,y), coord)
-		return s
+		return sum(manhattan((x,y), coord) for coord in coords)
 
 	n = 0
-
 	for y in range(miny, maxy):
 		for x in range(minx, maxx):
 			if get_sum(x,y) < 10000:
 				n += 1
 
-	print("B", n)
+	print("Part 2", n)
