@@ -1,10 +1,13 @@
-class Marble(object):
+# https://adventofcode.com/2018/day/9
+# Runtime ~ 17s for both parts (~8 times slower than deque solution)
+
+class Marble(object): # Own implementation of a simple double-linked list
 	def __init__(self, number):
 		self.number = number
 		self.prev = self
 		self.next = self
 
-	def remove(self):
+	def remove(self): # Removes itself from the list
 		self.prev.next = self.next
 		self.next.prev = self.prev
 

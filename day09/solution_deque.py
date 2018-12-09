@@ -1,5 +1,6 @@
 # https://adventofcode.com/2018/day/9
 # Alternative solution inspired by https://www.reddit.com/r/adventofcode/comments/a4i97s/2018_day_9_solutions/
+# Runtime ~2s for both parts
 
 from collections import deque # double-ended queue
 
