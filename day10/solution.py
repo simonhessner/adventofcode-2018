@@ -2,34 +2,32 @@
 import re
 
 with open('input') as f:
-	lines = f.read().splitlines()
-
-	xs, ys, sxs, sys  = [], [], [], []
-	for line in lines:
-		x,y, sx, sy = [int(s) for s in re.findall(r'-?\d+', line)]
+	xs, ys, speedxs, speedys  = [], [], [], []
+	for line in f.read().splitlines():
+		x,y, sx, sy = tuple(int(s) for s in re.findall(r'-?\d+', line))
 		xs.append(x)
 		ys.append(y)
-		sxs.append(sx)
-		sys.append(sy)
+		speedxs.append(sx)
+		speedys.append(sy)
 
 	smallest_bb = None
 	optimal_t = None
 	t = 0
-	while True:
+	while True:		
+		xs = [xs[i]+speedxs[i] for i in range(len(xs))]
+		ys = [ys[i]+speedys[i] for i in range(len(ys))]
 		bb = (max(xs)-min(xs))*(max(ys)-min(ys))
+		t += 1
 		if smallest_bb is None or bb <= smallest_bb:
 			smallest_bb = bb
-			optimal_t = t			
+			optimal_t = t
 		else:
+			# In this case the BB increases again, so the LAST point
+			# positions were correct => move back and cancel
+			xs = [xs[i]-speedxs[i] for i in range(len(xs))]
+			ys = [ys[i]-speedys[i] for i in range(len(ys))]
 			break
-		t += 1
-		xs = [xs[i]+sxs[i] for i in range(len(xs))]
-		ys = [ys[i]+sys[i] for i in range(len(ys))]
 
-
-	xs = [xs[i]-sxs[i] for i in range(len(xs))]
-	ys = [ys[i]-sys[i] for i in range(len(ys))]
-	
 	points = list(zip(xs, ys))
 	
 	for y in range(min(ys), max(ys)+1):
