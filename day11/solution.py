@@ -16,20 +16,29 @@ for x in range(300):
 
 
 
-biggest = -1000000
-bestx, besty = -1, -1
-bestsize = 1
+def find_best(minsize, maxsize):
+	biggest = None
+	bestx, besty = -1, -1
+	bestsize = -1
 
-for size in list(range(1,297))[::-1]: 
-	for x in range(300-size):
-		for y in range(300-size):		
-			subcell = grid[x:x+size,y:y+size]
-			v = np.sum(subcell)
-			if v > biggest:
-				biggest = v
-				bestx, besty = x+1,y+1
-				bestsize = size
-				#print(">", bestx, besty, bestsize, biggest)
+	for size in range(minsize,maxsize+1):
+		tmpbiggest = None
+		for x in range(300-size):
+			for y in range(300-size):		
+				subcell = grid[x:x+size,y:y+size]
+				v = np.sum(subcell)
+				if tmpbiggest is None or v > tmpbiggest:
+					tmpbiggest = v
+				if tmpbiggest < 0:
+					break
+				if biggest is None or tmpbiggest > biggest:
+					biggest = tmpbiggest
+					bestx, besty = x+1,y+1
+					bestsize = size
+					#print(">", bestx, besty, bestsize, biggest)
 
-#print()
-print(bestx, besty, bestsize, biggest)
+	#print()
+	return (bestx, besty, bestsize, biggest)
+
+print("Part 1", find_best(3,3)[:2])
+print("Part 2", find_best(1,300)[:3])
