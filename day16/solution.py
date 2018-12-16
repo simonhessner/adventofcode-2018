@@ -1,7 +1,6 @@
-from collections import defaultdict
+# https://adventofcode.com/2018/day/16
 
-registers = defaultdict(int)
-instructions = []
+from collections import defaultdict
 
 commands = {
 	"addr": lambda a, b : registers[a]  + registers[b],
@@ -22,6 +21,7 @@ commands = {
 	"eqrr": lambda a, b : int(registers[a] == registers[b])
 }
 
+registers = defaultdict(int)
 possible_mappings = defaultdict(set)
 
 def parse_parts(parts):
@@ -32,9 +32,7 @@ def parse_parts(parts):
 			continue
 		if v[0] == "[":
 			v = v[1:]
-		if v[-1] == "]":
-			v = v[:-1]
-		if v[-1] == ",":
+		if v[-1] in ",]":
 			v = v[:-1]
 		parsed.append(int(v))
 	return parsed
@@ -51,8 +49,7 @@ with open("input") as f:
 
 		if len(parts) > 1:
 			if parts[0] == "Before:":
-				parsed_before = parse_parts(parts[1:])
-				
+				parsed_before = parse_parts(parts[1:])				
 			elif parts[0] == "After:":
 				parsed_after = parse_parts(parts[1:])
 				c = 0
@@ -65,13 +62,8 @@ with open("input") as f:
 						possible_mappings[opcode].add(cmnd)
 				if c >= 3:
 					n += 1
-
 			else:
-				opcode, in1, in2, out = parts
-				opcode = int(opcode)
-				in1 = int(in1)
-				in2 = int(in2)
-				out = int(out)
+				opcode, in1, in2, out = [int(x) for x in parts]
 
 	print("Part 1", n)
 	
