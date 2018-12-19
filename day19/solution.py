@@ -36,7 +36,10 @@ with open("input") as f:
 		while registers[ip_reg] in range(len(instructions)):
 			instr = instructions[registers[ip_reg]]
 		
-			if registers[ip_reg] == 1: # When the program reaches this point, register 2 contanins a number whose prime factors are summed up to get the final result
+			# When the program reaches this point, register 2 contanins a number whose prime factors are summed 
+			# up to get the final result
+			# The idea comes from: https://www.reddit.com/r/adventofcode/comments/a7j9zc/2018_day_19_solutions/
+			if registers[ip_reg] == 1: 
 				return sum([x for x in range(1, registers[2]+1) if registers[2] % x == 0])
 				
 			registers[int(instr[3])] = commands[instr[0]](registers, int(instr[1]), int(instr[2]))
